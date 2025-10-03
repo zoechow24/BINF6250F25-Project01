@@ -8,27 +8,52 @@ In our implementation, we use a `defaultdict` data structure to hold a list of a
 # Pseudocode
 ## Add Edge
 ```
+
+function add_edge(self, left, right):
+        dictionary[left].append(right)
+        return dictionary
+
 ```
 
 ## Remove Edge
 ```
+
 ```
 
 ## Build de Bruijn Graph
 ```
-build_debruijn_graph:
-define substring length k and input string
-For each k-length substring of input:
-  split k mer into left and right k-1 mer
-  add k-1 mers as nodes with a directed edge from left k-1 mer to right k-1 mer
+
+function build_debruijn_graph(input string, k):
+dictionary = {}
+  string <- length k 
+  For each kmer of input string:
+      left <- string[0:k]
+      right <- string[1:k+1]
+      add_edge(left,right)   
+      #add k-1 mers as nodes with a directed edge from left k-1 mer to right k-1 mer
+  return dictionary
 ```
 
 ## Print Eulerian Walk
 ```
+
 ```
 
 ## Eularian Walk
 ```
+function eulerian_walk(node, seed=none):
+        tour = list(node)
+        for last node in tour:
+            edge <- randomly selected edge from dictionary
+            tour.append(edge)
+            dictionary <- remove_edge(edge)
+            if ______:
+                return tour
+            else:
+                return eulerian_walk(edge, seed)
+        
+
+
 eulerian_walk:
 Beginning at first_node as node
 
