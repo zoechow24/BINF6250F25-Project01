@@ -17,13 +17,15 @@ function add_edge(self, left, right):
 
 ## Remove Edge
 ```
-
+function remove_edge(self, left, right):
+        dictionary[left].remove(right)
+        return dictionary
 ```
 
 ## Build de Bruijn Graph
 ```
 
-function build_debruijn_graph(input string, k):
+function build_debruijn_graph(self, input string, k):
 dictionary = {}
   string <- length k 
   For each kmer of input string:
@@ -36,12 +38,18 @@ dictionary = {}
 
 ## Print Eulerian Walk
 ```
+function print_eularian_walk(self, seed = None):
+        if seed is not None:
+                set random seed  # random.seed(seed)
 
+        first_node <- randomly select node
+        return eularian_walk(first_node, seed)
+        
 ```
 
 ## Eularian Walk
 ```
-function eulerian_walk(node, seed=none):
+function eulerian_walk(node, seed = None):
         tour = list(node)
         for last node in tour:
             edge <- randomly selected edge from dictionary
@@ -52,7 +60,19 @@ function eulerian_walk(node, seed=none):
             else:
                 return eulerian_walk(edge, seed)
         
-
+#V2
+function eulerian_walk(node, seed = None):
+        tour <- list(node)
+        edge <- randomly selected edge from dictionary  #random.choice?
+        tour.append(edge)
+        dictionary <- remove_edge(node, edge)
+        node <- edge
+        if dictionary[node] == []  # if the key has an empty list
+                return tour
+        else  # recurse
+                next_tour <- eularian_walk(node)  # store next node and edge
+                return tour + next_tour  # combine lists
+                
 
 eulerian_walk:
 Beginning at first_node as node
