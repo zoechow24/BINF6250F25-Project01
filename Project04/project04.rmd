@@ -70,7 +70,8 @@ class DeBruijnGraph():
 
         Updates graph attribute to add right to the list named left in defaultdict   
         '''
-        pass
+        debrujin_graph[left].append[right]
+        return debruijn_graph
         
     def remove_edge(self, left, right):
         ''' This function removes an edge from the graph
@@ -81,7 +82,7 @@ class DeBruijnGraph():
 
         Updates graph attribute to remove right from the list named left in defaultdict
         '''
-        pass
+        debrujin_graph[left].remove[right]
 
     def build_debruijn_graph(self, input_string, k):
         ''' This function builds a De Buijn graph from a string
@@ -97,7 +98,12 @@ class DeBruijnGraph():
         >>> print(dbg.graph) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         defaultdict(<class 'list'>, {'thi': ['his', 'his', 'his'], 'his': ['is ', 'is ', 'is '], ...)
         '''
-        pass
+        for i in range(len(input_string):
+          #kmer <- input_string[i:k]  # ABCDEF
+          left = input_string[i:k-1]  # ABCDE
+          right = input_string[i+1:k]  # BCDEF
+          add_edge(left, right)
+        return debruijn_graph
 
     def print_eulerian_walk(self, seed=None):
         ''' This function starts the recursive walk function
@@ -113,7 +119,11 @@ class DeBruijnGraph():
         >>> dbg.print_eulerian_walk(seed=1) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         ['thi', ...]
         '''
-        pass
+        if seed is not None:
+          random.seed(seed)
+        
+        first_node = random.choice(list(debruijn_graph.keys()))
+        return eularian_walk(first_node)
         
     def eulerian_walk(self, node, seed=None):
         ''' This is a recursive function that follows all edges from a node
@@ -132,11 +142,57 @@ class DeBruijnGraph():
         >>> dbg.eulerian_walk('thi', seed=1) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         ['est', ...]
         '''
-        pass
-    
+        if seed is not None:
+          random.seed(seed)
+          
+        tour = list(node)
+        while debruijn_graph[node] != []:
+          edge = random.choice(list(debruijn_graph.values()))  # randomly generate edge from node
+          tour.append(edge)  # add edge to list
+          node = edge  # update node 
+          remove_edge(node, edge)
+          
+        return tour
+```
+
+
+```{python}
+def eulerian_walk2(self, node, seed=None):
+        ''' This is a recursive function that follows all edges from a node
+        to traverse the graph
+        
+        Args: 
+            node (str): current node to traverse from
+            seed (int): seed for random selection of edge to follow
+        
+        Returns:
+            tour (list): list of k-1 mers traversed so far by the algorithm
+            Note: this will be reverse order because of recursion
+            
+        Example:
+        >>> dbg = DeBruijnGraph("this this this is a test", 4)
+        >>> dbg.eulerian_walk('thi', seed=1) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+        ['est', ...]
+        '''
+        if seed is not None:
+          random.seed(seed)
+        
+        tour = list(node)  
+        edge = random.choice(list(debruijn_graph.values()))  # randomly generate edge from node
+        tour.append(edge)  # add edge to list
+        node = edge  # update node 
+        remove_edge(node, edge)
+        
+        if debruijn_graph[node] == []:
+          return tour
+        else:
+          next_tour <- eularian_walk(node)
+          tour = tour + next_tour
+          return tour
 ```
 
 ```{python}
+debruijn_graph=defaultdict(list)  # initialize defaultdict
 # | eval: false
 graph = DeBruijnGraph("fool me once shame on shame on you fool me", 6)
 print(graph.graph)
