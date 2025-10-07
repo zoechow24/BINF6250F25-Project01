@@ -54,28 +54,36 @@ function print_eularian_walk(self, seed = None):
 ## Eularian Walk
 
 ```         
-#V1 - while
+#V1.0 - recursion
 function eulerian_walk(node, seed = None):
-        tour = list(node)
-        while dictionary[node] != []:
-            edge <- randomly selected edge from dictionary  #random.choice(list(dictionary[node]))
-            tour.append(edge)
-            dictionary <- remove_edge(node, edge)
-            node <- edge
-        return tour
-        
-#V2 - recursion
-function eulerian_walk(node, seed = None):
-        tour <- list(node)
+        if seed is given:
+                set seed
+                
+        tour <- add node to the list 
         edge <- randomly selected edge from dictionary  #random.choice?
-        tour.append(edge)
-        dictionary <- remove_edge(node, edge)
-        node <- edge
-        if dictionary[node] == []  # if the key has an empty list
+        remove edge from node in the dictionary
+        set the edge as the next node
+        if the node has an empty list
                 return tour
         else  # recurse
                 next_tour <- eularian_walk(node)  # store next node and edge
                 return tour + next_tour  # combine lists
+                
+#V1.1 - recursion
+function eulerian_walk(node, seed = None):
+        if seed is not None
+                set seed
+        
+        if the node has an empty list
+                return the node as a list
+        
+        tour <- add node to the list 
+        edge <- randomly selected edge from dictionary
+        remove edge from node in the dictionary
+        
+        next_tour <- recursion call using the edge as the next node
+        return tour + next tour
+        
   ABCAC
   tour: [A,B]
   next_tour 1: [B,C]

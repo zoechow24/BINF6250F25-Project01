@@ -98,12 +98,11 @@ class DeBruijnGraph():
         >>> print(dbg.graph) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         defaultdict(<class 'list'>, {'thi': ['his', 'his', 'his'], 'his': ['is ', 'is ', 'is '], ...)
         '''
-        for i in range(len(input_string)):
+        for i in range(len(input_string) - k + 1):
           #kmer <- input_string[i:k]  # ABCDEF
           left = input_string[i:i+k-1]  # ABCDE
           right = input_string[i+1:i+k]  # BCDEF
-          if len(left) == k-1 and len(right) == k-1: #makes that kmers are proper length
-            self.add_edge(left, right)
+          self.add_edge(left, right)
         return self.graph
 
     def print_eulerian_walk(self, seed=None):
@@ -124,6 +123,7 @@ class DeBruijnGraph():
           random.seed(seed)
         
         first_node = random.choice(list(self.graph.keys()))
+        print(f"first_node: {first_node}")
         return self.eulerian_walk(first_node)
         
     def eulerian_walk(self, node, seed=None):
@@ -145,20 +145,40 @@ class DeBruijnGraph():
         '''
         if seed is not None:
           random.seed(seed)
+        #print(f"Visiting node: '{node}'")
+        #print(f"Available edges: {self.graph[node]}")
           
-        tour = [node] #list(node)
-        while self.graph[node] != []:
-          edge = random.choice(self.graph[node])      #list(self.graph.values()))  # randomly generate edge from node
-          self.remove_edge(node, edge)
-          node = edge  # update node 
-          tour.append(edge)  # add edge to list
-          
-        return tour
+        tour = [node]
+        edge = random.choice(self.graph[node])
+        self.remove_edge(node, edge)
+        node = edge
+        
+        if not self.graph[node]:
+          #print(f"No more edges from '{node}', returning [{node}]")
+          return tour
+        else:
+          next_tour = self.eulerian_walk(node)
+          #print(f"Combining {tour} + {next_tour}")
+          result = tour + next_tour
+          #print(f"Returning: {result}")
+          return result
 ```
 
-
 ```{python}
-def eulerian_walk2(self, node, seed=None):
+# | eval: false
+graph = DeBruijnGraph("fool me once shame on shame on you fool me", 6)
+print(graph.graph)
+walk = graph.print_eulerian_walk(seed=4)
+walk[0] + "".join(map(lambda x: x[-1], walk[1:]))
+```
+
+Expected output:
+```python-traceback
+defaultdict(<class 'list'>, {'fool ': ['ool m', 'ool m'], 'ool m': ['ol me', 'ol me'], 'ol me': ['l me '], 'l me ': [' me o'], ' me o': ['me on'], 'me on': ['e onc', 'e on ', 'e on '], 'e onc': [' once'], ' once': ['once '], 'once ': ['nce s'], 'nce s': ['ce sh'], 'ce sh': ['e sha'], 'e sha': [' sham'], ' sham': ['shame', 'shame'], 'shame': ['hame ', 'hame '], 'hame ': ['ame o', 'ame o'], 'ame o': ['me on', 'me on'], 'e on ': [' on s', ' on y'], ' on s': ['on sh'], 'on sh': ['n sha'], 'n sha': [' sham'], ' on y': ['on yo'], 'on yo': ['n you'], 'n you': [' you '], ' you ': ['you f'], 'you f': ['ou fo'], 'ou fo': ['u foo'], 'u foo': [' fool'], ' fool': ['fool ']})
+'fool me once shame on shame on you fool me'
+```
+```{python}
+def eulerian_walk(self, node, seed=None):
         ''' This is a recursive function that follows all edges from a node
         to traverse the graph
         
@@ -177,32 +197,21 @@ def eulerian_walk2(self, node, seed=None):
         '''
         if seed is not None:
           random.seed(seed)
+        #print(f"Visiting node: '{node}'")
+        #print(f"Available edges: {self.graph[node]}")
+          
+        if not self.graph[node]:
+          #print(f"No more edges from '{node}', returning [{node}]")
+          return [node]
         
-        tour = list(node)  
-        edge = random.choice(list(self.graph.values()))  # randomly generate edge from node
-        tour.append(edge)  # add edge to list
-        node = edge  # update node 
-        remove_edge(node, edge)
+        tour = [node]
+        edge = random.choice(self.graph[node])  # randomly generate edge from node
+        self.remove_edge(node, edge)
         
-        if debruijn_graph[node] == []:
-          return tour
-        else:
-          next_tour = eulerian_walk(node)
-          tour = tour + next_tour
-          return tour
+        next_tour = self.eulerian_walk(edge)  #using edge as the next node
+        #print(f"Combining {tour} + {next_tour}")
+        result = tour + next_tour
+        #print(f"Returning: {result}")
+        return result
 ```
 
-```{python}
-debruijn_graph=defaultdict(list)  # initialize defaultdict
-# | eval: false
-graph = DeBruijnGraph("fool me once shame on shame on you fool me", 6)
-print(graph.graph)
-walk = graph.print_eulerian_walk(seed=4)
-walk[0] + "".join(map(lambda x: x[-1], walk[1:]))
-```
-
-Expected output:
-```python-traceback
-defaultdict(<class 'list'>, {'fool ': ['ool m', 'ool m'], 'ool m': ['ol me', 'ol me'], 'ol me': ['l me '], 'l me ': [' me o'], ' me o': ['me on'], 'me on': ['e onc', 'e on ', 'e on '], 'e onc': [' once'], ' once': ['once '], 'once ': ['nce s'], 'nce s': ['ce sh'], 'ce sh': ['e sha'], 'e sha': [' sham'], ' sham': ['shame', 'shame'], 'shame': ['hame ', 'hame '], 'hame ': ['ame o', 'ame o'], 'ame o': ['me on', 'me on'], 'e on ': [' on s', ' on y'], ' on s': ['on sh'], 'on sh': ['n sha'], 'n sha': [' sham'], ' on y': ['on yo'], 'on yo': ['n you'], 'n you': [' you '], ' you ': ['you f'], 'you f': ['ou fo'], 'ou fo': ['u foo'], 'u foo': [' fool'], ' fool': ['fool ']})
-'fool me once shame on shame on you fool me'
-```
