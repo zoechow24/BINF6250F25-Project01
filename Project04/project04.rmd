@@ -1,6 +1,6 @@
 ---
 title: "Project 04"
-author: "Your Name"
+author: "Zoe Chow and Allen Benavidez"
 date: "`r format(Sys.time(), '%Y%m%d')`"
 output:
   github_document:
@@ -177,41 +177,3 @@ Expected output:
 defaultdict(<class 'list'>, {'fool ': ['ool m', 'ool m'], 'ool m': ['ol me', 'ol me'], 'ol me': ['l me '], 'l me ': [' me o'], ' me o': ['me on'], 'me on': ['e onc', 'e on ', 'e on '], 'e onc': [' once'], ' once': ['once '], 'once ': ['nce s'], 'nce s': ['ce sh'], 'ce sh': ['e sha'], 'e sha': [' sham'], ' sham': ['shame', 'shame'], 'shame': ['hame ', 'hame '], 'hame ': ['ame o', 'ame o'], 'ame o': ['me on', 'me on'], 'e on ': [' on s', ' on y'], ' on s': ['on sh'], 'on sh': ['n sha'], 'n sha': [' sham'], ' on y': ['on yo'], 'on yo': ['n you'], 'n you': [' you '], ' you ': ['you f'], 'you f': ['ou fo'], 'ou fo': ['u foo'], 'u foo': [' fool'], ' fool': ['fool ']})
 'fool me once shame on shame on you fool me'
 ```
-```{python}
-def eulerian_walk(self, node, seed=None):
-        ''' This is a recursive function that follows all edges from a node
-        to traverse the graph
-        
-        Args: 
-            node (str): current node to traverse from
-            seed (int): seed for random selection of edge to follow
-        
-        Returns:
-            tour (list): list of k-1 mers traversed so far by the algorithm
-            Note: this will be reverse order because of recursion
-            
-        Example:
-        >>> dbg = DeBruijnGraph("this this this is a test", 4)
-        >>> dbg.eulerian_walk('thi', seed=1) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-        ['est', ...]
-        '''
-        if seed is not None:
-          random.seed(seed)
-        #print(f"Visiting node: '{node}'")
-        #print(f"Available edges: {self.graph[node]}")
-          
-        if not self.graph[node]:
-          #print(f"No more edges from '{node}', returning [{node}]")
-          return [node]
-        
-        tour = [node]
-        edge = random.choice(self.graph[node])  # randomly generate edge from node
-        self.remove_edge(node, edge)
-        
-        next_tour = self.eulerian_walk(edge)  #using edge as the next node
-        #print(f"Combining {tour} + {next_tour}")
-        result = tour + next_tour
-        #print(f"Returning: {result}")
-        return result
-```
-
