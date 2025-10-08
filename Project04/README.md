@@ -69,40 +69,16 @@ function eulerian_walk(node, seed = None):
                 next_tour <- eularian_walk(node)  # store next node and edge
                 return tour + next_tour  # combine lists
                 
-#V1.1 - recursion
-function eulerian_walk(node, seed = None):
-        if seed is not None
-                set seed
-        
-        if the node has an empty list
-                return the node as a list
-        
-        tour <- add node to the list 
-        edge <- randomly selected edge from dictionary
-        remove edge from node in the dictionary
-        
-        next_tour <- recursion call using the edge as the next node
-        return tour + next tour
-        
-  ABCAC
-  tour: [A,B]
-  next_tour 1: [B,C]
-  next_tour 2: [C,A]
-  next_tour 3: [A,C]
-  tour: [C,A,A,C]
-  tour: [B,C,C,A,A,C]
-  tour: [A,B,B,C,C,A,A,C]
-  ABCAC
 ```
 
 # Successes
 
-* Creating and understanding the De Bruijn graph was much more straightforward than implementing the Eulerian Walk. Initially, we were unsure how to construct a `defaultdict` efficiently without multiple iterations, but once we realized that each k-mer consists of both a left and right part, the function's logic became much clearer.
+-   Creating and understanding the De Bruijn graph was much more straightforward than implementing the Eulerian Walk. Initially, we were unsure how to construct a `defaultdict` efficiently without multiple iterations, but once we realized that each k-mer consists of both a left and right part, the function's logic became much clearer.
 
 # Struggles
 
-* Understanding how to use and apply recursion. This was a relatively unfamiliar concept for the both of us, so it took a bit of discecting before we were able to apply it appropriately.
-* Using self. to call on functions
+-   Understanding how to use and apply recursion. This was a relatively unfamiliar concept for the both of us, so it took a bit of discecting before we were able to apply it appropriately.
+-   Using self. to call on functions
 
 # Personal Reflections
 
@@ -111,6 +87,7 @@ function eulerian_walk(node, seed = None):
 My first obstacle when beginning this project was getting a better understanding of De Bruijn Graphs. I took some time to do some research on De Bruijn Graphs and Eulerian Walk to create a plan on how to tackle the project. Once Zoe and I started writing the pseudocode, things began to come together little by little. The good portion of our time was spent on writing the pseudocode for this project which really laid the foundation. We then went on to write our code which went smoothly for the most part since we had put a lot of effort into our pseudocode. We had some struggles, especially in the recursion portion as well as a few bugs that were occurring with our code, but we ultimately solved those issues by taking the time to look through our code and researching ways to properly apply recursion in our code. My biggest take away from this project has been the importance of creating good pseudocode as well as giving yourself enough time to go back and fix any bugs that occur.
 
 ## Other member (Zoe Chow)
+
 As usual, I felt confused and overwhelmed after class, but after discussing the problem with Allen, we were able to better understand how the De Bruijn Graph and Eulerian Walk worked. We spent a large portion of the project pseudocoding and working through the two main functions. Once we fully grasped the task, the actual coding process became much simpler. Breaking down each function line by line helped us clarify our approach. For the Eulerian Walk function, I initially felt uncomfortable using recursion—despite encountering it in Project 2—and first implemented it using a while loop. However, after reading several resources like [GeeksforGeeks](https://www.geeksforgeeks.org/python/recursion-in-python/) and [w3schools](https://www.w3schools.com/python/gloss_python_function_recursion.asp), my understanding of recursion improved. At first, I incorrectly thought a for loop was necessary when pseudocoding the recursive solution, but I later realized that recursion continues calling the function until a base case is reached, eliminating the need for such a loop. I wrote separate versions of the recursion function to experiment with different recursive approaches, though we ultimately kept the version that made the most sense to both of us. In addition to recursion, de bruijn graphs, and eulerian walk, I was also a bit unfamiliar with using class functions. I have used them before in BINF6200, but I had completely forgotten about it. Therefore, there was a lot of debugging and fine-tuning required before the program worked correctly. This project introduced various concepts that were new to me, but I’m proud of our progress. Understanding how these ideas are implemented was both challenging and rewarding.
 
 # Generative AI Appendix
