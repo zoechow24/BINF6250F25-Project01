@@ -12,31 +12,35 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=TRUE)
 library('reticulate')
-use_python('/usr/bin/python3')
 ```
+
+
+```{python}
+import pandas as pd
+```
+
 
 ## Burrows-Wheeler Transform
 ```{python BWT}
-def BWT(string: str) -> str:
+
+def create_BWT_matrix(string: str) -> pandas.core.frame.DataFrame:
   """Function to calculate Burrows-Wheeler Transform for a given string.
+  
+  Computes the Burrows-Wheeler Transform by creating all rotations of the input
+  string, sorting them lexicographically, and extracting the last column.
+  
+  Args:
+    string: The input string to transform.
     
-    Computes the Burrows-Wheeler Transform by creating all rotations of the input
-    string, sorting them lexicographically, and extracting the last column.
-    
-    Args:
-        string: The input string to transform.
-    
-    Returns:
-        The Burrows-Wheeler Transform of the input string.
-        
-    Examples:
-        >>> BWT('googol')
-        'lo$oogg'
-        
-        >>> BWT('banana$')
-        'annb$aa'
-    """
-pass
+  Returns:
+    The Burrows-Wheeler Transform dataframe
+  """
+      
+  s = string + '$'
+  rotations = pd.DataFrame([list(s[i:] + s[:i]) for i in range(len(s))])
+  
+  return rotations
+  
 ```
 
 ```{python suffix_array}
@@ -52,6 +56,7 @@ def suffix_array(string: str) -> list[int]:
     Returns:
         A list of integers representing the starting positions of the
         lexicographically sorted suffixes.
+        A matrix of sorted BWT.
         
     Examples:
         >>> suffix_array('googol')
@@ -60,14 +65,16 @@ def suffix_array(string: str) -> list[int]:
         >>> suffix_array('banana$')
         [6, 5, 3, 1, 0, 4, 2]
     """
-pass
+    rotations = create_BWT_matrix(string)
+    sorted_rot = rotations.sort_values(by=0)
+    sorted_ind = sorted_rot.index.to_list()
+    return sorted_ind, sorted_rot
 ```
 
 
 ```{python BWT_from_suffix_array}
 def BWT_from_suffix_array(
-  text: str, 
-  suffix_positions: list[int]
+  text: str
 ) -> str:
   """Function to calculate the Burrows-Wheeler Transform from a suffix array.
     
@@ -76,26 +83,27 @@ def BWT_from_suffix_array(
     
     Args:
         text: The input string to transform.
-        suffix_positions: The suffix array for the input string, containing the
-            starting positions of all suffixes in lexicographical order.
+        
     
     Returns:
         The Burrows-Wheeler Transform of the input string.
         
     Examples:
-        >>> BWT_from_suffix_array("banana$", [6, 5, 3, 1, 0, 4, 2])
+        >>> BWT_from_suffix_array("banana$")
         'annb$aa'
         
-        >>> BWT_from_suffix_array("googol$", [6, 3, 0, 5, 2, 4, 1])
+        >>> BWT_from_suffix_array("googol$")
         'lo$oogg'
     """
-pass
+    sorted_rot = suffix_array(text)[1]
+    last_col = sorted_rot[len(text)-1]
 
-from collections import Counter
+
 ```
 
 
 ```{python CalculateSmallerCount}
+from collections import Counter
 def cal_count(string: str) -> dict[str, int]:
   """Function to count characters lexicographically smaller than each character.
     
