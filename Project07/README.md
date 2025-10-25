@@ -3,177 +3,60 @@
 The Burrows-Wheeler Transform (BWT) is a powerful algorithm used in data compression and bioinformatics. In this project, we will use BWT to compress and revert a string. This works by sorting all possible cyclic rotations of a string lexicographically and extracting the last column of the sorted matrix. 
 
 # Pseudocode
-Put pseudocode in this box:
-
+## Burrows-Wheeler Transform
 ```
-def BWT(string: str) -> str:
-    """Function to calculate Burrows-Wheeler Transform for a given string.
-    
-    Computes the Burrows-Wheeler Transform by creating all rotations of the input
-    string, sorting them lexicographically, and extracting the last column.
-    
-    Args:
-        string: The input string to transform.
-    
-    Returns:
-        The Burrows-Wheeler Transform of the input string.
-        
-    Examples:
-        >>> BWT('googol')
-        'lo$oogg'
-        
-        >>> BWT('banana$')
-        'annb$aa'
-    """
-    pass
+FUNCTION BWT:
+  takes input string and returns transform of the input string (last column)
+  1. Create all rotations of the input string
+  2. Sort rotated strings lexicographically
+  3. Extract last column
 
-def suffix_array(string: str) -> list[int]:
-    """Function to calculate suffix-array for a given string.
-    
-    Computes the suffix array by sorting all suffixes of the input string
-    lexicographically and returning their starting positions.
-    
-    Args:
-        string: The input string to process.
-    
-    Returns:
-        A list of integers representing the starting positions of the
-        lexicographically sorted suffixes.
-        
-    Examples:
-        >>> suffix_array('googol')
-        [6, 3, 0, 5, 2, 4, 1]
-        
-        >>> suffix_array('banana$')
-        [6, 5, 3, 1, 0, 4, 2]
-    """
-    pass
+FUNCTION suffix_array:
+  takes input string and returns list of integers representing the starting positions of the lexicographically sorted suffixes
+  
+  
+FUNCTION BWT_from_suffix_array:
+  calculates BWT from a suffix array. Uses suffix array to identify the character that precedes each suffix in the sorted order. 
+  takes input string and suffix positions and returns BWT of the input string
+```
 
-def BWT_from_suffix_array(
-  text: str, 
-  suffix_positions: list[int]
-  ) -> str:
-    """Function to calculate the Burrows-Wheeler Transform from a suffix array.
-    
-    Computes the Burrows-Wheeler Transform by using the suffix array to identify
-    the character that precedes each suffix in the sorted order.
-    
-    Args:
-        text: The input string to transform.
-        suffix_positions: The suffix array for the input string, containing the
-            starting positions of all suffixes in lexicographical order.
-    
-    Returns:
-        The Burrows-Wheeler Transform of the input string.
-        
-    Examples:
-        >>> BWT_from_suffix_array("banana$", [6, 5, 3, 1, 0, 4, 2])
-        'annb$aa'
-        
-        >>> BWT_from_suffix_array("googol$", [6, 3, 0, 5, 2, 4, 1])
-        'lo$oogg'
-    """
-    pass
-
-from collections import Counter
+## Inverting Burrows-Wheeler Transform
+```
+FUNCTION cal_count:
+  takes input string and returns a dictionary that indicates the count of characters lexicographically smaller than it
+  Keys: unique letters
+  Value: count of characters lexicographically smaller than it
 
 
-def cal_count(string: str) -> dict[str, int]:
-    """Function to count characters lexicographically smaller than each character.
-    
-    For each character in the alphabet, calculates how many characters in the
-    input string are lexicographically smaller than it.
-    
-    Args:
-        string: The input string to analyze.
-    
-    Returns:
-        A dictionary mapping each character to the count of characters
-        lexicographically smaller than it.
-    
-    Examples:
-        >>> cal_count('ATGACG')
-        {'A': 0, 'C': 2, 'G': 3, 'T': 5}
-        
-        >>> cal_count('banana')
-        {'a': 0, 'b': 3, 'n': 4}
-    """
-    pass
-
-def cal_occur(bwt_string: str) -> dict[str, list[int]]:
-    """Function to calculate occurrences of each character up to each position.
-    
-    For each character and each position i, calculates how many times the
-    character appears in the substring bwt_string[0:i].
-    
-    Args:
-        bwt_string: The BWT string to analyze.
-    
-    Returns:
-        A dictionary mapping each character to a list of occurrence counts,
-        where occur[char][i] is the number of occurrences of char in
-        bwt_string[0:i].
-    
-    Examples:
-        >>> cal_occur('AG$CG')
-        {'$': [0, 0, 1, 1, 1], 'A': [1, 1, 1, 1, 1], 'C': [0, 0, 0, 1, 1], 'G': [0, 1, 1, 1, 2]}
-        
-        >>> cal_occur('annb$aa')
+FUNCTION cal_occur: 
+  calculate occurrence of each unique character within the bwt_string
+  takes bwt_string and returns dictionary of list with occurence counts
+  Ex. cal_occur('annb$aa') -> 
         {'$': [0, 0, 0, 0, 1, 1, 1], 'a': [0, 1, 1, 1, 1, 2, 3], 'b': [0, 0, 0, 1, 1, 1, 1], 'n': [0, 0, 2, 2, 2, 2, 2]}
-    """
-    pass
 
-def update_range(
-  lower: int, 
-  upper: int, 
-  count: dict[str, int], 
-  occur: dict[str, list[int]], 
-  a: str) -> tuple[int, int]:
-    """Function to update range given character a.
-    
-    Updates the search range during backward search in the BWT pattern matching
-    algorithm when processing character a.
-    
-    Args:
+
+FUNCTION update_range:
+  updates search range during backward search in the BWT pattern matching algorithm
+  Args:
         lower: The lower boundary of the current range.
         upper: The upper boundary of the current range.
-        count: Dictionary mapping each character to the count of lexicographically
-            smaller characters.
-        occur: Dictionary mapping each character to its occurrence counts at each
-            position.
+        count: cal_count dictionary
+        occur: cal_occur dictionary
         a: The character being processed in the pattern.
     
     Returns:
         A tuple containing the updated lower and upper boundaries of the range.
-    
-    Note:
-        This function assumes occur[a][-1] = 0 for boundary conditions.
-    """
-    pass
 
-def find_match(query: str, reference: str) -> list[int]:
-    """Function to find exact matching by applying Burrows-Wheeler Transform.
-    
-    Searches for all occurrences of the query string within the reference string
-    using the Burrows-Wheeler Transform algorithm for efficient pattern matching.
-    
-    Args:
+FUNCTION find_match:
+  searches for all occurrences of the query string within the. reference string and returns a list of integers representing the starting positions of the occurrences of the query string within the reference string
+  Args:
         query: The pattern string to search for.
         reference: The text string to search within.
     
     Returns:
-        A list of integers representing the 0-based starting positions of all
-        occurrences of the query string within the reference string. Returns an
-        empty list if no matches are found.
-    
-    Examples:
-        >>> find_match('ana', 'banana')
-        [1, 3]
+        A list of integers representing the 0-based starting positions of all occurrences of the query string within the reference string. 
+        Empty list if no matches are found.
         
-        >>> find_match('xyz', 'banana')
-        []
-    """
-    pass
 ```
 
 # Successes
