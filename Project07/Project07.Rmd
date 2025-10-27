@@ -36,8 +36,8 @@ def create_BWT_matrix(string: str) -> pandas.core.frame.DataFrame:
     The Burrows-Wheeler Transform dataframe
   """
       
-  s = string + '$'
-  rotations = pd.DataFrame([list(s[i:] + s[:i]) for i in range(len(s))])
+  string = string + '$'
+  rotations = pd.DataFrame([list(string[i:] + string[:i]) for i in range(len(string))])
   
   return rotations
   
@@ -66,7 +66,7 @@ def suffix_array(string: str) -> list[int]:
         [6, 5, 3, 1, 0, 4, 2]
     """
     rotations = create_BWT_matrix(string)
-    sorted_rot = rotations.sort_values(by=0)
+    sorted_rot = rotations.sort_values(by=list(range(len(string))))
     sorted_ind = sorted_rot.index.to_list()
     return sorted_ind, sorted_rot
 ```
@@ -124,7 +124,18 @@ def cal_count(string: str) -> dict[str, int]:
         >>> cal_count('banana')
         {'a': 0, 'b': 3, 'n': 4}
     """
-pass
+    
+    char_count = dict(Counter(string))  # count characters in the string
+    
+    char_smaller = {char:0 for char in char_count}  # initialize dictionary for lexicographically smaller characters
+    
+    # compare characters and add to char_smaller dictionary
+    for char1 in char_count:
+      for char2 in char_count:
+        if char1 > char2:
+          char_smaller[char1] += char_count[char2]
+    
+    return char_smaller
 ```
 
 
@@ -150,7 +161,18 @@ def cal_occur(bwt_string: str) -> dict[str, list[int]]:
         >>> cal_occur('annb$aa')
         {'$': [0, 0, 0, 0, 1, 1, 1], 'a': [0, 1, 1, 1, 1, 2, 3], 'b': [0, 0, 0, 1, 1, 1, 1], 'n': [0, 0, 2, 2, 2, 2, 2]}
     """
-pass
+    # initialize dict for cal_occur
+    cal_occur = {char: [0 for i in bwt_string] for char in sorted(set(bwt_string))}
+    
+    # update positions in dict with character occurrence up to that point
+    for key in cal_occur:
+      count = 0
+      for i, char in enumerate(bwt_string):
+        if key == char:
+          count += 1
+        cal_occur[key][i] = count
+    
+    return cal_occur
 ```
 
 
