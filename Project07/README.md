@@ -5,18 +5,10 @@ The Burrows-Wheeler Transform (BWT) is a powerful algorithm used in data compres
 # Pseudocode
 ## Burrows-Wheeler Transform
 ```
-FUNCTION create_BWT_matrix:
-  1. takes string 
-  2. create matrix of rotated input strings
-      deque.rotate()
-  3. add starting positions 
-  4. return matrix
-  
-
 FUNCTION suffix_array:
   takes input string and returns list of integers representing the starting positions of the lexicographically sorted suffixes
   1. take input string
-  2. call create_BWT_matrix
+  2. create BWT matrix
   3. sort BWT matrix lexicographically
       numpy to rotate/scramble rows?
   4. Return list of integers of sorted starting positions and sorted matrix
@@ -25,10 +17,9 @@ FUNCTION suffix_array:
 FUNCTION BWT_from_suffix_array:
   calculates BWT from a suffix array. Uses suffix array to identify the character that precedes each suffix in the sorted order. 
   takes input string and suffix positions and returns BWT of the input string
-  1. takes input string 
-  2. call suffix_array 
-  3. extract last column
-  4. return last column
+  1. takes input string and suffix positions
+  2. iterates through suffix positions to find bwt string
+  3. returns bwt string (last column of BWT)
 ```
 
 ## Inverting Burrows-Wheeler Transform
@@ -65,12 +56,9 @@ FUNCTION update_range:
     Returns:
         A tuple containing the updated lower and upper boundaries of the range.
   
-  if lower > upper: break
-  
-  if lower == 0:
-    new lower = count of the character + 0 + 1
-  
-  else:
+  1. caluculate new start position using character's count and occurerences at range start
+  2. calculate new end position using character's count and occurrences at range end
+  3. return new start and end positions
       
     
 
@@ -81,10 +69,18 @@ FUNCTION find_match:
         query: The pattern string to search for.
         reference: The text string to search within.
     
-    Returns:
+  Returns:
         A list of integers representing the 0-based starting positions of all occurrences of the query string within the reference string. 
         Empty list if no matches are found.
         
+        
+  1. initialize search range to cover the entire transformed text
+  2. for each character in the pattern, processing from right to left: 
+      i. update the search range based on the current character
+      ii. if the range becomes empty then return empty list as pattern is not found
+      
+  3. Collect all suffix positions within final range
+  4. return list of matching positions
 ```
 
 # Successes
