@@ -94,7 +94,7 @@ We had some trouble creating the find_match() function at first since we were wo
 I felt that this project was quite difficult since the algorithm was a little difficult to follow when it got to the pattern matching process. I took extra time to study the algorithm since it was important for this project to fully understand first before diving into the code. After, taking some time I was able to better understand what was required for the assignment.
 
 ## Zoe Chow
-
+This project was much easier for me to understand conceptually compared to the last. It was very helpful to write out the matrices and do the calculations by hand. Different timezones made it hard to communicate, but our initial pseudocode session helped us map things out before we coded. I feel much more satisfied with this project than the last conceptually. 
 
 ## Michael Bambha
 
