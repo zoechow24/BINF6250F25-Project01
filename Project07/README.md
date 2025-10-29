@@ -84,17 +84,20 @@ FUNCTION find_match:
 ```
 
 # Successes
-Description of the team's learning points
+We were able to write most of the code quite smoothly since we took some time in our first meeting to layout some well thought out pseudocode. After taking some time to gain a better understanding of the pattern matching process, we were able to tackle the latter half effectively. Despite being in different timezones, we were able to meet up and work through code.
 
 # Struggles
-Description of the stumbling blocks the team experienced
+We had some trouble creating the find_match() function at first since we were wondering how exactly we should set up the functions sequentially but after sometime of working we were able to set it up correctly. We specifically had some trouble with the way our update_range() function since we originally had it as being inclusive at the lower which would result in incorrect ranges.
 
 # Personal Reflections
-## Group Leader
-Group leader's reflection on the project
+## Allen Benavidez
+I felt that this project was quite difficult since the algorithm was a little difficult to follow when it got to the pattern matching process. I took extra time to study the algorithm since it was important for this project to fully understand first before diving into the code. After, taking some time I was able to better understand what was required for the assignment.
 
-## Other member
-Other members' reflections on the project
+## Zoe Chow
+
+
+## Michael Bambha
+
 
 # Generative AI Appendix
 As per the syllabus
