@@ -195,10 +195,13 @@ def update_range(
     if a not in count:
       return (0, -1)
 
-    lower = count[a] + occur[a][lower] - 1
-    upper = count[a] + occur[a][upper] - 1
+    if lower == 0:
+       new_lower = count[a] + 0
+    else:
+        new_lower = count[a] + occur[a][lower-1]  # not inclusive of lower
+    new_upper = count[a] + occur[a][upper] - 1  # inclusive of upper
   
-    return (lower, upper)
+    return (new_lower, new_upper)
 ```
 
 
