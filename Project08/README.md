@@ -24,12 +24,14 @@ FUNCTION Max_Probabilties(position, prob_matrix, traceback_matrix, init_probs, t
     1. Calculate maximum probability for each position and possible state and store in **probability** matrix:
         Max(Most optimal previous probability * Transition Probability * Emission Probability)
     2. For each probability store 0, 1, or 2 to represent LEFT, DIAG-DOWN, DIAG-UP in traceback matrix.
+    3. Returns updated prob_matrix and traceback_matrix
 ```
 ### Traceback
 ```
 FUNCTION traceback(traceback_matrix):
     1. Reconstruct optimal path using traceback matrix
     2. Reverse path 
+    3. Returns optimal path
 ```
 # Successes
 Description of the team's learning points
