@@ -8,39 +8,35 @@ DIAG_DOWN = 3
 
 def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, trans_probs, emit_probs):
     states = list(init_probs.keys())
+    rows = len(states)
 
     if j == 0:
         #calculating the probability of the first column
         max_prob = init_probs[states[i]] * emit_probs[states[i]][obs[j]]
         traceback = START
     else:
+        candidates = []  # (list of probability, traceback)
         #calculating the probability from same state transition
         left = prob_matrix[i, j -1] 
         left_prob = left * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
+        candidates.append((left_prob, LEFT))
 
-        if i == 0:
+        # both will be done if both conditions are met (aka when there are more than 2-3 states)
+        if i < rows - 1:
             # In case only diagnoal down is possible       
             diag_down =  prob_matrix[i + 1, j -1] 
             diag_down_prob = diag_down * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
-            max_prob = max(left_prob, diag_down_prob)
-        else:
+            candidates.append((diag_down_prob, DIAG_DOWN))
+
+        if i > 0:
             # in case diagonal up is possible   
             diag_up = prob_matrix[i - 1, j - 1]  
             diag_up_prob = diag_up * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
-                      
-            max_prob = max(left_prob, diag_up_prob)
-
-        #compare the values and select maximum value
-        if max_prob == left_prob:
-            traceback = LEFT
+            candidates.append((diag_up_prob, DIAG_UP))       
         
-        elif max_prob == diag_down_prob:
-            traceback = DIAG_DOWN
-            
-        elif max_prob == diag_up_prob:
-            traceback = DIAG_UP
-    
-    #print(traceback)
+        # select greatest probability with corresponding traceback direction
+        max_prob, traceback = max(candidates, key=lambda x: x[0])
+
 
     return max_prob, traceback
 
@@ -60,13 +56,12 @@ def traceback(traceback_matrix, states, max_position):
     # initialize starting position 
     current_row, current_col = max_position
 
-    while current_col >= 0:
-        # add current state to path
+    # stop condition: reached start column
+    while current_col != 0:
+        # record state before moving 
         tb_path.append(states[current_row])
-        print(tb_path)
-        
+
         current_move = traceback_matrix[current_row, current_col]
-        #print(current_move)
         
         if current_move == LEFT:
             # Update col
@@ -118,21 +113,11 @@ def viterbi(obs, init_probs, trans_probs, emit_probs):
                                                 init_probs, 
                                                 trans_probs, 
                                                 emit_probs)
-    print("this is max position")
-    last_column = prob_matrix[:,-1]
-    max_row =  np.argmax(last_column)
-    max_position = (max_row, columns - 1)
-    print(max_position)
-    print("This is traceback")
-    print(traceback_matrix)
-
-    print("This is the prob_matrix")
-    print(prob_matrix)
-
     
+    # determine max_position to start traceback
+    max_position = (np.argmax(prob_matrix[:,-1]), columns - 1)   
 
-    # Traceback
-    #max_position = np.unravel_index(np.argmax(prob_matrix, axis=None), prob_matrix.shape)
+    # traceback
     optimal_path = traceback(traceback_matrix, states, max_position)
 
     return optimal_path
