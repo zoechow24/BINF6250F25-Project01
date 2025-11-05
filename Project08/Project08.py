@@ -14,15 +14,15 @@ def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, tran
         max_prob = init_probs[states[i]] * emit_probs[states[i]][obs[j]]
         traceback = START
     else:
-        left = prob_matrix[i, j -1] #if j > 0
+        left = prob_matrix[i, j -1] 
         left_prob = left * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
 
         if i == 0:       
-            diag_down =  prob_matrix[i + 1, j -1] #if i < len_states - 1 and j > 0 
+            diag_down =  prob_matrix[i + 1, j -1]  
             diag_down_prob = diag_down * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
             max_prob = max(left_prob, diag_down_prob)
         else:   
-            diag_up = prob_matrix[i - 1, j - 1] #if i > 0 
+            diag_up = prob_matrix[i - 1, j - 1] 
             diag_up_prob = diag_up * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
                       
             max_prob = max(left_prob, diag_up_prob)
@@ -105,8 +105,8 @@ def viterbi(obs, init_probs, trans_probs, emit_probs):
     traceback_matrix = np.zeros((rows, columns), dtype=int)
 
     # Recursion
-    for i in range(rows):
-        for j in range(columns):
+    for j in range(columns):
+        for i in range(rows):
             # Calculate+update score and traceback of each position 
             prob_matrix[i,j],traceback_matrix[i,j] = max_probabilites(i, j, obs, 
                                                 prob_matrix, 
