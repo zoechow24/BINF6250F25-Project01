@@ -1,7 +1,7 @@
 
 # BINF6250 - Project 08: Viterbi Algorithm
 # Introduction
-Description of the project
+We are implementing the viterbi alogrithm to demonstrate our understanding of hidden markovs. Our objective is to finding the most likely sequence of hidden states given a sequence of observations.
 
 # Pseudocode
 ## Viterbi Function
@@ -34,17 +34,16 @@ FUNCTION traceback(traceback_matrix):
     3. Returns optimal path
 ```
 # Successes
-Description of the team's learning points
+We were pretty fast to come up with a plan for this project. We felt we could take from some previous approaches from other projects and implement them into our pseudocode. Once we had a plan laid out, certain parts of the project seemed to come together quickly. We were also able to meet up together and work through problems with our code. We were also pretty quick to choose Positron as our mode for coding and updating our github branch which thus far has been much easier to use than Rstudio.
 
 # Struggles
-Description of the stumbling blocks the team experienced
+Our function, max_probabilities() which performs our recursion process was giving us issues particularly when updating the traceback.
 
 # Personal Reflections
-## Group Leader
-Group leader's reflection on the project
-
-## Other member
+## Group Leader (Allen Benavidez)
+Like many of my of the other projects previous to this one, I had to take some extra time to study the algorithm. Though I was able to understand the algorithm, I struggled to think of a specific way I could recreate the process in code. Overall, I found this algorithm to be easier to conceptually understand than some of our more recent projects.
+## Other member (Zoe Chow)
 Other members' reflections on the project
 
 # Generative AI Appendix
-As per the syllabus
+
