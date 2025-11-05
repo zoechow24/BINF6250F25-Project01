@@ -5,6 +5,34 @@ LEFT = 0
 DIAG_UP = 1
 DIAG_DOWN = 2
 
+def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, trans_probs, emit_probs):
+    states = list(init_probs.keys())
+    len_states = len(states)
+
+    DIAG_UP = prob_matrix[i - 1, j - 1] if i > 0 and j > 0 else 0
+    DIAG_DOWN =  prob_matrix[i + 1, j -1] if i < len_states - 1 and j > 0 else 0
+    LEFT = prob_matrix[i, j -1] if j > 0 else 0
+
+    left_prob = LEFT * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
+    diag_up_prob = DIAG_UP * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
+    diag_down_prob = (DIAG_DOWN * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
+                      if i < len_states -1 else 0)
+
+    max_prob = max(left_prob, diag_up_prob, diag_down_prob)
+
+    if max_prob == left_prob:
+        traceback_matrix[i,j] = 1
+    
+    elif max_prob == diag_down_prob:
+        traceback_matrix[i,j] = 2
+    
+    elif max_prob == diag_up_prob:
+        traceback_matrix[i,j] = 3
+    else:
+        traceback_matrix[i,j] = 0
+
+    return max_prob, traceback_matrix
+
 def traceback(traceback_matrix, states, max_position):
     """
     Use the traceback matrix to reconstruct the most optimal path
