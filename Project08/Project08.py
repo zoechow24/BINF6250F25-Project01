@@ -14,16 +14,16 @@ def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, tran
         max_prob = init_probs[states[i]] * emit_probs[states[i]][obs[j]]
         traceback = START
     else:
-        LEFT = prob_matrix[i, j -1] #if j > 0
-        left_prob = LEFT * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
+        left = prob_matrix[i, j -1] #if j > 0
+        left_prob = left * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
 
         if i == 0:       
-            DIAG_DOWN =  prob_matrix[i + 1, j -1] #if i < len_states - 1 and j > 0 
-            diag_down_prob = DIAG_DOWN * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
+            diag_down =  prob_matrix[i + 1, j -1] #if i < len_states - 1 and j > 0 
+            diag_down_prob = diag_down * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
             max_prob = max(left_prob, diag_down_prob)
         else:   
-            DIAG_UP = prob_matrix[i - 1, j - 1] #if i > 0 
-            diag_up_prob = DIAG_UP * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
+            diag_up = prob_matrix[i - 1, j - 1] #if i > 0 
+            diag_up_prob = diag_up * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
                       
             max_prob = max(left_prob, diag_up_prob)
 
@@ -32,9 +32,11 @@ def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, tran
         
         elif max_prob == diag_down_prob:
             traceback = DIAG_DOWN
-        
+            
         elif max_prob == diag_up_prob:
             traceback = DIAG_UP
+    
+    #print(traceback)
 
     return max_prob, traceback
 
@@ -50,14 +52,17 @@ def traceback(traceback_matrix, states, max_position):
     """
     tb_path = []  # use a list to store traceback path since states could be words instead of single chr
 
+    #print(max_position)
     # initialize starting position 
     current_row, current_col = max_position
 
     while current_col >= 0:
         # add current state to path
         tb_path.append(states[current_row])
+        print(tb_path)
         
         current_move = traceback_matrix[current_row, current_col]
+        #print(current_move)
         
         if current_move == LEFT:
             # Update col
@@ -110,7 +115,6 @@ def viterbi(obs, init_probs, trans_probs, emit_probs):
                                                 trans_probs, 
                                                 emit_probs)
     print("this is max position")
-    #max_position = np.unravel_index(np.argmax(prob_matrix, axis=None), prob_matrix.shape) for prob_matrix[:,-1]
     last_column = prob_matrix[:,-1]
     max_row =  np.argmax(last_column)
     max_position = (max_row, columns - 1)
@@ -151,7 +155,8 @@ def main():
         "I": {"A": 0.1, "C": 0.4, "G": 0.4, "T": 0.1},
         "G": {"A": 0.3, "C": 0.2, "G": 0.2, "T": 0.3}
     }
-    viterbi(obs,init_probs,trans_probs,emit_probs)
+    
+    print(viterbi(obs,init_probs,trans_probs,emit_probs))
 
 
 
