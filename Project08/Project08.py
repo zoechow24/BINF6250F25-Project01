@@ -1,37 +1,42 @@
 import numpy as np
 
+START = 0
+LEFT = 1
+DIAG_UP = 2
+DIAG_DOWN = 3
 
-LEFT = 0
-DIAG_UP = 1
-DIAG_DOWN = 2
 
 def max_probabilites(i , j, obs, prob_matrix, traceback_matrix, init_probs, trans_probs, emit_probs):
     states = list(init_probs.keys())
-    len_states = len(states)
 
-    DIAG_UP = prob_matrix[i - 1, j - 1] if i > 0 and j > 0 else 0
-    DIAG_DOWN =  prob_matrix[i + 1, j -1] if i < len_states - 1 and j > 0 else 0
-    LEFT = prob_matrix[i, j -1] if j > 0 else 0
-
-    left_prob = LEFT * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
-    diag_up_prob = DIAG_UP * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
-    diag_down_prob = (DIAG_DOWN * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
-                      if i < len_states -1 else 0)
-
-    max_prob = max(left_prob, diag_up_prob, diag_down_prob)
-
-    if max_prob == left_prob:
-        traceback_matrix[i,j] = 1
-    
-    elif max_prob == diag_down_prob:
-        traceback_matrix[i,j] = 2
-    
-    elif max_prob == diag_up_prob:
-        traceback_matrix[i,j] = 3
+    if j == 0:
+        #calculating the probability of the first column
+        max_prob = init_probs[states[i]] * emit_probs[states[i]][obs[j]]
+        traceback = START
     else:
-        traceback_matrix[i,j] = 0
+        LEFT = prob_matrix[i, j -1] #if j > 0
+        left_prob = LEFT * trans_probs[states[i]][states[i]] * emit_probs[states[i]][obs[j]]
 
-    return max_prob, traceback_matrix
+        if i == 0:       
+            DIAG_DOWN =  prob_matrix[i + 1, j -1] #if i < len_states - 1 and j > 0 
+            diag_down_prob = DIAG_DOWN * trans_probs[states[i + 1]][states[i]] * emit_probs[states[i]][obs[j]]
+            max_prob = max(left_prob, diag_down_prob)
+        else:   
+            DIAG_UP = prob_matrix[i - 1, j - 1] #if i > 0 
+            diag_up_prob = DIAG_UP * trans_probs[states[i - 1]][states[i]] * emit_probs[states[i]][obs[j]]
+                      
+            max_prob = max(left_prob, diag_up_prob)
+
+        if max_prob == left_prob:
+            traceback = LEFT
+        
+        elif max_prob == diag_down_prob:
+            traceback = DIAG_DOWN
+        
+        elif max_prob == diag_up_prob:
+            traceback = DIAG_UP
+
+    return max_prob, traceback
 
 def traceback(traceback_matrix, states, max_position):
     """
@@ -95,12 +100,28 @@ def viterbi(obs, init_probs, trans_probs, emit_probs):
     traceback_matrix = np.zeros((rows, columns), dtype=int)
 
     # Recursion
-    max_position, traceback_matrix = max_probabilites(obs, 
-                                        init_probs, 
-                                        trans_probs, 
-                                        emit_probs, 
-                                        prob_matrix, 
-                                        traceback_matrix)
+    for i in range(rows):
+        for j in range(columns):
+            # Calculate+update score and traceback of each position 
+            prob_matrix[i,j],traceback_matrix[i,j] = max_probabilites(i, j, obs, 
+                                                prob_matrix, 
+                                                traceback_matrix, 
+                                                init_probs, 
+                                                trans_probs, 
+                                                emit_probs)
+    print("this is max position")
+    #max_position = np.unravel_index(np.argmax(prob_matrix, axis=None), prob_matrix.shape) for prob_matrix[:,-1]
+    last_column = prob_matrix[:,-1]
+    max_row =  np.argmax(last_column)
+    max_position = (max_row, columns - 1)
+    print(max_position)
+    print("This is traceback")
+    print(traceback_matrix)
+
+    print("This is the prob_matrix")
+    print(prob_matrix)
+
+    
 
     # Traceback
     #max_position = np.unravel_index(np.argmax(prob_matrix, axis=None), prob_matrix.shape)
@@ -130,6 +151,7 @@ def main():
         "I": {"A": 0.1, "C": 0.4, "G": 0.4, "T": 0.1},
         "G": {"A": 0.3, "C": 0.2, "G": 0.2, "T": 0.3}
     }
+    viterbi(obs,init_probs,trans_probs,emit_probs)
 
 
 
