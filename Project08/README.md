@@ -46,4 +46,4 @@ Like many of my of the other projects previous to this one, I had to take some e
 Conceptually, I found this project pretty easy to understand. I needed to calculate each maximal state probabilities by hand to properly understand if the program was working properly. We split the functions and I handled the traceback, which I found to be relatively simple as it reflected the Smith-Waterman traceback. I used a mock traceback matrix when creating the code, which reassured me that the function was working properly. I only ran into trouble with the function after consulting Allen regarding the recursion function we created because we forgot to consider certain conditions when pseudo-coding. Overall, like previous projects, I find it best when I code with someone synchronously as we can discuss and talk things out to discover things we are missing. Multiple brains are better than one!
 
 # Generative AI Appendix
-
+[chatgpt was used to get ideas for debugging max_probabilities](https://chatgpt.com/share/690b5cc5-7314-800b-99e7-92b6297925e7)
