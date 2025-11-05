@@ -43,7 +43,7 @@ Our function, max_probabilities() which performs our recursion process was givin
 ## Group Leader (Allen Benavidez)
 Like many of my of the other projects previous to this one, I had to take some extra time to study the algorithm. Though I was able to understand the algorithm, I struggled to think of a specific way I could recreate the process in code. Overall, I found this algorithm to be easier to conceptually understand than some of our more recent projects.
 ## Other member (Zoe Chow)
-Other members' reflections on the project
+Conceptually, I found this project pretty easy to understand. I needed to calculate each maximal state probabilities by hand to properly understand if the program was working properly. We split the functions and I handled the traceback, which I found to be relatively simple as it reflected the Smith-Waterman traceback. I used a mock traceback matrix when creating the code, which reassured me that the function was working properly. I only ran into trouble with the function after consulting Allen regarding the recursion function we created because we forgot to consider certain conditions when pseudo-coding. Overall, like previous projects, I find it best when I code with someone synchronously as we can discuss and talk things out to discover things we are missing. Multiple brains are better than one!
 
 # Generative AI Appendix
 
