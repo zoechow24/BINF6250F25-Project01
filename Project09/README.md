@@ -2,41 +2,55 @@
 Implementing forward, backward and forward-backword algorithm
 
 # Pseudocode
-
+## Helper Function for Forward and Backward Algorithm
 ```
-function probability(i, j,string, initial state, probability_matrix)
-    if initial state is not 1:
-        calculate first emissions
-    for next position, add probabilities from previous emission to possible transitions and emission probs
-    after the end position, add up accumalated probs for both states
-return matrix_of_probs, total_probability
+function probability(i, j,string, initial symbol=0, probability_matrix)
+    if j == 0 (first col):
+        if inital symbol == 1:
+            prob of position == initial symbol
+        else:
+            calculate probability of the first symbol (initial prob * emission prob)
+    else:       
+        for all other positions, multiply probabilities from previous emission to possible transitions and emission probs and add them together
+return prob
+```
 
+## Forward Function
+```
 function forward
-    call on probability function
-return matrix_of_probs, total_probability
+    initialize forward matrix (number of states X length of obs)
+    for each row and column of the matrix, call on probability function
+        add probability to probability matrix
+    determine total accumulated probability of the matrix
+return forward probability matrix, total accumulated probabiltiy
+```
 
-
+## Backward Function
+```
 function backward()
-    initial_state= 1
-    reverse(string)
-    call on probability function
-    reverse columns of matrix_of_probs
-return matrix_of_probs, total_probability
+    initialize backward matrix (number of states X length of obs)
+    set initial symbol probabiltiy = 1
+    reverse observation string
+    for each row and column of the matrix, call on probability function
+        add probability to probability matrix
+    determine total accumulated probability of the matrix
+    reverse columns of the probability matrix so that columns are in the same order as obs
+return backward probability matrix, total accumulated probability
+```
 
-
-function forward_backward(obs,state, position_number)
-    PMP = matrix 
-    forward_matrix = index 0 of function forward
-    backward_matrix = index 0 of function backward
-    total_forward = index 1 of forward function
-    total_backward = index 1 of backward function
-
+## Foward-Backward Function
+```
+function forward_backward(obs)
+    initialize matrix for PMP (number of states X length of obs)
+    
+    Get foward matrix, total forward prob, backward matrix, total backward prob (can call as tuples)
+        forward_matrix = first return of forward (index 0)
+        total_forward = second return of forward function (index 1)
+        backward_matrix = first return of backward function (index 0)
+        total_backward = second return of backward function (index 1)
+    
     for each position of PMP calculate [PMP Calculation]
-        create paths by choosing greatest state at position i
-
-
-
-
+    create paths by choosing greatest state at position i
 ```
 
 # Successes
