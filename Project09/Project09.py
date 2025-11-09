@@ -43,10 +43,33 @@ class HMM:
         """
         # calculate probability of first col/symbol of obs
         # if we're on the first col (j==0), prob = init_sym if init_sym=1, else init_prob * emit_prob
+        current_state = self.states[i]
+        current_obs = obs[j]
+        rows = len(self.states)
 
+        if j == 0:
+            if init_sym == 1
+                prob = 1
+            else:
+                prob = self.init_probs[current_state] * self.emit_probs[current_state][current_obs]
+        else:
+            candidates = []
+            # condition for getting probability in the same row
+            same_row_prob = prob_matrix[i,j -1] * self.trans_probs[current_state][current_state] * self.emit_probs[current_state][current_obs]
+            candidates.append(same_row_prob)
 
+            #from previous state (Diagonal Down)
+            if i < rows - 1:
+                previous_state = self.states[i + 1]
+                diag_down_prob = prob_matrix[i +1, j - 1] * self.trans_probs[previous_state][current_state] * self.emit_probs[current_state][current_obs]
+                candidates.append(diag_down_prob)
+            if i > 0:
+                previous_state = self.states[ i - 1]
+                diag_up_prob = prob_matrix[ i -1, j -1] * self.trans_probs[previous_state][current_state] * self.emit_probs[current_state][current_obs] 
+                candidates.append(diag_up_prob)
+        
         # calculate probabiltiy of other cols
-        # sum(last col * trans_prob * emit_prob)
+        prob = sum(candidates)
 
         return prob
 
@@ -61,13 +84,19 @@ class HMM:
             accum_prob (float): total accumulated probability for the forward matrix (sum of last column)
         """
         # initialize forward matrix
+        len_states = len(self.states)
+        len_obs = len(obs)
+        forward_matrix = np.zeros((len_states,len_obs))
 
 
         # loop through each position of the matrix and get total probability
+        for i in range(len_states):
+            for j in range(len_obs):
+                forward_matrix[i,j] = self.probability(i,j,obs, forward_matrix)
 
 
         # determine total accumulated probability (sum of both states for last col)
-
+        accum_prob = sum(forward_matrix[:-1])
         
         return forward_matrix, accum_prob
 
@@ -82,24 +111,38 @@ class HMM:
             accum_prob (float): total accumulated probability for the forward matrix (sum of last column)
         """
         # initialize backward matrix
-
+        len_states = len(self.states)
+        len_obs = len(obs)
+        backward_matrix = np.zeros((len_states,len_obs))
+        init_sym = 1
 
         # reverse observation string
-
+        reverse_obs = obs[::-1]
 
         # loop through each position of the matrix and get total probability
-
+        for i in range(len_states):
+            for j in range(len_obs):
+                backward_matrix[i,j] = self.probability(i,j,reverse_obs,init_sym, backward_matrix)
 
         # determine total accumulated probability (sum of both states for last col)
-
+        accum_prob = sum(backward_matrix[:-1])
 
         # reverse matrix back so that the symbols of the observation string is in the correct order
         # np.fliplr(arr)
+        backward_matrix = np.fliplr(backward_matrix)
 
-        
         return backward_matrix, accum_prob
 
+    def PMP_Calc(i, j,forward_matrix, total_forward, backward_matrix, total_backward):
+        PMP_forward = forward_matrix[i,j] * backward_matrix[i,j] / total_forward
+        PMP_backward = forward_matrix[i,j] * backward_matrix[i,j] / total_backward
+        PMP = sum(PMP_forward, PMP_backward)
+        return PMP
     
+    def traceback(PMP_matrix):
+        return path
+
+
     def forward_backward(self, obs):
         """
         Perform the Forward-Backward Algorithm. Calculate the probability of a position in the observation being assigned a particular hidden state using Posterior Marginal Probability (PMP), and use Posterior Decoding to determine path. 
@@ -110,21 +153,24 @@ class HMM:
             path (str): decoded path 
         """
         # initialize PMP matrix
-
+        rows = len(self.states)
+        columns = len(obs)
+        PMP_matrix =  np.zeros((rows, columns))
 
         # Get forward matrix, total accumulated forward probability
-
+        forward_matrix,  total_forward = self.forward(obs)
 
         # Get backward matrix, total accumulated backward probability
-
+        backward_matrix, total_backward = self.backward(obs)
 
         # do we want to create functions that calculates PMP and performs traceback? Similar to the max_probs and traceback functions from viterbi.
         # Calculate PMP for each position of the PMP matrix 
-        
-
+        for i in range(rows):
+            for j in range(columns):
+                PMP_matrix[i,j] = self.PMP_Calc(i, j,forward_matrix, total_forward, backward_matrix, total_backward)
 
         # Select path using traceback
-
+        path = self.traceback(PMP_matrix)
 
         return path
 
