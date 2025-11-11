@@ -2,84 +2,124 @@
 Implementing forward, backward and forward-backword algorithm
 
 # Pseudocode
-## Helper Function for Forward and Backward Algorithm
+## Class Attributes
 ```
-function probability(i, j,string, initial symbol=0, probability_matrix)
-    if j == 0 (first col):
-        if inital symbol == 1:
-            prob of position == initial symbol
-        else:
-            calculate probability of the first symbol (initial prob * emission prob)
-    else:       
-        for all other positions, multiply probabilities from previous emission to possible transitions and emission probs and add them together
-return prob
+init_probs : dict
+    Initial state probabilities.
+trans_probs : dict of dict
+    Transition probabilities.
+emit_probs : dict of dict
+    Emission probabilities.
+states : list
+    Ordered list of HMM states.
+
+```
+## Main Functions:
+### Forward Function
+```
+Args: observation
+
+1. initialize forward matrix (number of states X length of obs)
+2. for each row and column of the matrix, call on probability function
+    add probability to probability matrix
+3. determine total accumulated probability of the matrix
+
+Return: forward probability matrix, total accumulated probabiltiy
 ```
 
-## Forward Function
+### Backward Function
 ```
-function forward
-    initialize forward matrix (number of states X length of obs)
-    for each row and column of the matrix, call on probability function
-        add probability to probability matrix
-    determine total accumulated probability of the matrix
-return forward probability matrix, total accumulated probabiltiy
-```
+Args: observation
 
-## Backward Function
-```
-function backward()
-    initialize backward matrix (number of states X length of obs)
-    set initial symbol probabiltiy = 1
-    reverse observation string
-    for each row and column of the matrix, call on probability function
-        add probability to probability matrix
-    determine total accumulated probability of the matrix
-    reverse columns of the probability matrix so that columns are in the same order as obs
-return backward probability matrix, total accumulated probability
+1. initialize backward matrix (number of states X length of obs)
+2. set initial symbol probabiltiy = 1
+3. reverse observation string
+4. for each row and column of the matrix, call on probability function and add probability to probability matrix
+5. determine total accumulated probability of the matrix
+6. reverse columns of the probability matrix so that columns are in the same order as obs
+
+Return: backward probability matrix, total accumulated probability
 ```
 
-## Foward-Backward Function
+### Forward-Backward Function
 ```
-function PMP_Calc(i, j,forward_matrix, total_forward, backward_matrix, total_backward)
-    PMP_forward = forward_matrix[i,j] * backward_matrix[i,j] / total_forward
-    PMP_backward = forward_matrix[i,j] * backward_matrix[i,j] / total_backward
-    PMP = SUM(PMP_forward, PMP_backward)
-return PMP
+1. initialize matrix for PMP (number of states X length of obs)
 
-function traceback(PMP)
-    current_row =  max of the last column
-    current_column =  last column in PMP
-    initialize list to store path
-    loop through columns starting from last column, determine max of each and store the state in list
-    reverse list and convert to string
-
-function forward_backward(obs)
-    initialize matrix for PMP (number of states X length of obs)
-
-    Get foward matrix, total forward prob, backward matrix, total backward prob (can call as tuples)
-        forward_matrix = first return of forward (index 0)
-        total_forward = second return of forward function (index 1)
-        backward_matrix = first return of backward function (index 0)
-        total_backward = second return of backward function (index 1)
+2. Get foward matrix, total forward prob, backward matrix, total backward prob by calling the forward and backward functions.
+    forward_matrix = first return of forward (index 0)
+    total_forward = second return of forward function (index 1)
+    backward_matrix = first return of backward function (index 0)
+    total_backward = second return of backward function (index 1)
     
-    for each position of PMP calculate [PMP Calculation]
-    create paths by choosing greatest state at position i
+3. for each position of the PMP matrix, calculate the posterior marginal probability (call on _PMP_calc())
 
+4. create paths by choosing greatest state for each position (call on _posterior_decoding())
+
+Return: path of best states
+```
+
+## Helper Functions
+### For Forward and Backward Algorithms
+```
+_probabilty():
+Args: 
+    i (int): current state position
+    j (int): current symbol (observation position)
+    obs (str): observation
+    prob_matrix (arra): probability matrix
+
+
+1. Handle first column:
+    * if the inital symbol == 1, representing the backward algorithm, prob of the position = initial symbol
+    * else, this is the forward algorithm, and the probability of the first column = (initial prob * emission prob)
+2. For the other columns:      
+    * multiply probabilities from previous observation to possible transitions and emission probs and add them together
+
+Returns: accumulated probability at that position
+```
+
+## For Foward-Backward Function
+```
+_PMP_calc():
+Args:
+    i (int): current state position
+    j (int): current symbol (observation position)
+    forward_matrix (array): probability matrix of the observation based on the Forward Algorithm
+    total_forward (float): total accumulated probability for the forward matrix (sum of last column)
+    backward_matrix (array): probability matrix of the observation based on the Backward Algorithm
+    total_backward (float): total accumulated probability for the backward matrix (sum of last column)
+    
+1. prob = average of the total forward and total backward probabilities (they should be similar so we can use either one for the calculation, but average could reduce rounding errors)
+2. PMP = (forward probability in state i at position j * backward probability in state i at position j) / total probability
+
+Return: PMP (posterior marginal probability)
+```
 
 ```
+_posterior_decoding():
+Arg:
+    PMP_matrix (array): matrices of posterior marginal probability
+
+1. find the index of the best states for each column of the PMP matrix
+2. use the index to access the states and produce a path of the best states
+
+Return: path of best states
+```
+
+
 
 # Successes
-Description of the team's learning points
+
 
 # Struggles
-Description of the stumbling blocks the team experienced
+* understanding how posterior marginal probability and posterior decoding worked
 
 # Personal Reflections
 ## Group Leader
 Group leader's reflection on the project
 
-## Other member
-Other members' reflections on the project
+## Other member - Zoe
+This project was fairly straightforward to implement, as the underlying theory closely follows the Viterbi Algorithm. We used the Viterbi algorithm as a template for our code and adapted it accordingly. One challenge arose when calculating the posterior marginal probabilities is that we initially forgot that the total accumulated forward and backward probabilities should be nearly identical. Once we understood this, it was a simple fix in our code. Additionally, we considered how posterior decoding works, noting that it selects the state with the highest posterior probability at each position. We realized that this approach could lead to issues when more than two states are available, as it may produce impossible paths. Despite these challenges, I believe we were able to implement the algorithm correctly and effectively.
 
 # Generative AI Appendix
 As per the syllabus
