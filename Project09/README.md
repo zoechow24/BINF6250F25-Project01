@@ -26,6 +26,7 @@ Args: observation
 
 Return: forward probability matrix, total accumulated probabiltiy
 ```
+$$\text{prob} = \sum \text{(probability of the prev position * transition probability from the prev to the current state * emission probability of the current position)}$$
 
 ### Backward Function
 ```
@@ -33,13 +34,12 @@ Args: observation
 
 1. initialize backward matrix (number of states X length of obs)
 2. set initial symbol probabiltiy = 1
-3. reverse observation string
-4. for each row and column of the matrix, call on probability function and add probability to probability matrix
-5. determine total accumulated probability of the matrix
-6. reverse columns of the probability matrix so that columns are in the same order as obs
+3. for each row and column of the matrix in reverse, calculate the probability and add to probability matrix
+4. determine total accumulated probability of the matrix
 
 Return: backward probability matrix, total accumulated probability
 ```
+$$\text{prob} = \sum{{\text{probability of next position * transition probability of current state to next state * emission probability of the next position}}}$$
 
 ### Forward-Backward Function
 ```
@@ -59,24 +59,6 @@ Return: path of best states
 ```
 
 ## Helper Functions
-### For Forward and Backward Algorithms
-```
-_probabilty():
-Args: 
-    i (int): current state position
-    j (int): current symbol (observation position)
-    obs (str): observation
-    prob_matrix (arra): probability matrix
-
-
-1. Handle first column:
-    * if the inital symbol == 1, representing the backward algorithm, prob of the position = initial symbol
-    * else, this is the forward algorithm, and the probability of the first column = (initial prob * emission prob)
-2. For the other columns:      
-    * multiply probabilities from previous observation to possible transitions and emission probs and add them together
-
-Returns: accumulated probability at that position
-```
 
 ## For Foward-Backward Function
 ```

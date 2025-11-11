@@ -46,10 +46,29 @@ class HMM:
         len_obs = len(obs)
         forward_matrix = np.zeros((len_states, len_obs))
 
-        # loop through each position of the matrix and get total probability
+        # initialize first column
         for i in range(len_states):
-            for j in range(len_obs):
-                forward_matrix[i, j] = self._probability(i, j, obs, forward_matrix)
+            state = self.states[i]
+            forward_matrix[i, 0] = (
+                self.init_probs[state] * self.emit_probs[state][obs[0]]
+            )
+
+        # fill the rest of the matrix
+        for j in range(1, len_obs):
+            for i in range(len_states):
+                current_state = self.states[i]
+                prob = 0
+                # sum over all previous states
+                for last_i in range(len_states):
+                    prev_state = self.states[last_i]
+                    prev_prob = forward_matrix[last_i][j - 1]
+                    prob += (
+                        prev_prob
+                        * self.trans_probs[prev_state][current_state]
+                        * self.emit_probs[current_state][obs[j]]
+                    )
+
+                forward_matrix[i, j] = prob
 
         # determine total accumulated probability (sum of both states for last col)
         accum_prob = np.sum(forward_matrix[:, -1])
@@ -70,23 +89,40 @@ class HMM:
         len_states = len(self.states)
         len_obs = len(obs)
         backward_matrix = np.zeros((len_states, len_obs))
-        init_sym = 1
 
-        # reverse observation string
-        reverse_obs = obs[::-1]
+        # initialize last col
+        backward_matrix[:, -1] = 1
 
-        # loop through each position of the matrix and get total probability
-        for i in range(len_states):
-            for j in range(len_obs):
-                backward_matrix[i, j] = self._probability(
-                    i, j, reverse_obs, backward_matrix, init_sym
-                )
+        # loop through each position of the matrix backwardsand get total probability
+        # range(start = len-2 to exclude last col, stop = -1 to include index 0, step = -1 to move backwards)
+        for j in range(len_obs - 2, -1, -1):
+            for i in range(len_states):
+                current_state = self.states[i]
+                prob = 0  # initialize prob of each position
 
-        # determine total accumulated probability (sum of both states for last col)
-        accum_prob = np.sum(backward_matrix[:, -1])
+                # prob of position is the sum of all next states
+                for next_i in range(len_states):
+                    next_state = self.states[next_i]
+                    next_obs = obs[j + 1]
+                    next_prob = backward_matrix[next_i, j + 1]
+                    prob += (
+                        next_prob
+                        * self.trans_probs[current_state][next_state]
+                        * self.emit_probs[next_state][next_obs]
+                    )
 
-        # reverse matrix back so that the symbols of the observation string is in the correct order
-        backward_matrix = np.fliplr(backward_matrix)
+                backward_matrix[i, j] = prob
+
+        # determine total accumulated probability
+        # accumulated prob = sum of (initial state * prob of the accumulated prob at the state * prob of emission at the state) in the first col
+        accum_prob = np.sum(
+            [
+                self.init_probs[self.states[i]]
+                * self.emit_probs[self.states[i]][obs[0]]
+                * backward_matrix[i, 0]
+                for i in range(len_states)
+            ]
+        )
 
         return backward_matrix, accum_prob
 
@@ -110,9 +146,9 @@ class HMM:
         # Get backward matrix, total accumulated backward probability
         backward_matrix, total_backward = self.backward(obs)
 
-        print(
-            f"total forward: {total_forward} \ntotal backward: {total_backward}"
-        )
+        print(f"total forward: {total_forward} \ntotal backward: {total_backward}")
+
+        print(f"forward_matrix: {forward_matrix} \nbackward_matrix: {backward_matrix}")
 
         diff = total_forward - total_backward
         print(f"diff: {diff}")
@@ -131,65 +167,6 @@ class HMM:
         return path
 
     # Helper Functions
-    # Forward and Backward functions uses _probability() to calculate the accumulated probability at each position
-    def _probability(self, i, j, obs, prob_matrix, init_sym=0):
-        """
-        Calculate the probability of each state and symbol of the observation.
-
-        Arg:
-            i (int): current state position
-            j (int): current symbol (observation position)
-            obs (str): observation
-            prob_matrix (arra): probability matrix
-        Returns:
-            prob (float): accumulated probability at that position
-        """
-        # calculate probability of first col/symbol of obs
-        # if we're on the first col (j==0), prob = init_sym if init_sym=1, else init_prob * emit_prob
-        current_state = self.states[i]
-        current_obs = obs[j]
-        rows = len(self.states)
-
-        if j == 0:
-            if init_sym == 1:
-                prob = 1
-            else:
-                prob = (
-                    self.init_probs[current_state]
-                    * self.emit_probs[current_state][current_obs]
-                )
-        else:
-            candidates = []
-            # condition for getting probability in the same row
-            same_row_prob = (
-                prob_matrix[i, j - 1]
-                * self.trans_probs[current_state][current_state]
-                * self.emit_probs[current_state][current_obs]
-            )
-            candidates.append(same_row_prob)
-
-            # from previous state (Diagonal Down)
-            if i < rows - 1:
-                previous_state = self.states[i + 1]
-                diag_down_prob = (
-                    prob_matrix[i + 1, j - 1]
-                    * self.trans_probs[previous_state][current_state]
-                    * self.emit_probs[current_state][current_obs]
-                )
-                candidates.append(diag_down_prob)
-            if i > 0:
-                previous_state = self.states[i - 1]
-                diag_up_prob = (
-                    prob_matrix[i - 1, j - 1]
-                    * self.trans_probs[previous_state][current_state]
-                    * self.emit_probs[current_state][current_obs]
-                )
-                candidates.append(diag_up_prob)
-
-            # calculate probabiltiy of other cols
-            prob = sum(candidates)
-
-        return prob
 
     # Forward-Backward function uses _PMP_calc() to calculate the posterior marginal probability of each position
     def _PMP_calc(
@@ -208,9 +185,9 @@ class HMM:
         Returns:
             PMP (float): posterior marginal probability for the current position
         """
-        
+
         prob = (total_forward + total_backward) / 2
-        
+
         PMP = forward_matrix[i, j] * backward_matrix[i, j] / prob
 
         return PMP
